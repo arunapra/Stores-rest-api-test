@@ -11,7 +11,7 @@ class StoreTest(BaseTest):
 
                 self.assertEqual(response.status_code, 201)
                 self.assertIsNotNone(StoreModel.find_by_name("Test Store"))
-                self.assertDictEqual({'name': 'Test Store', 'items': []}, json.loads(response.data))
+                self.assertDictEqual({'id': 1, 'name': 'Test Store', 'items': []}, json.loads(response.data))
 
     def test_create_duplicate_store(self):
         with self.app() as client:
@@ -37,9 +37,11 @@ class StoreTest(BaseTest):
             with self.app_context():
                 client.post("/store/Test Store")
                 response = client.get("/store/Test Store")
-                expected = {'name': 'Test Store',
-                            'items': []
-                            }
+                expected = {
+                    'id': 1,
+                    'name': 'Test Store',
+                    'items': []
+                    }
 
                 self.assertEqual(response.status_code, 200)
                 self.assertDictEqual(expected, json.loads(response.data))
@@ -58,8 +60,10 @@ class StoreTest(BaseTest):
                 client.post("/store/Test Store")
                 client.post("/item/Test Item", data={'price': 19.99, 'store_id': 1})
                 response = client.get("/store/Test Store")
-                expected = {'name': 'Test Store',
-                            'items': [
+                expected = {
+                    'id': 1,
+                    'name': 'Test Store',
+                    'items': [
                                 {
                                     'name': 'Test Item',
                                     'price': 19.99
@@ -75,11 +79,15 @@ class StoreTest(BaseTest):
                 client.post("/store/Test Store 2")
                 response = client.get("/stores")
                 expected = {'stores': [
-                    {'name': 'Test Store 1',
-                     'items': []
+                    {
+                        'id': 1,
+                        'name': 'Test Store 1',
+                        'items': []
                      },
-                    {'name': 'Test Store 2',
-                     'items': []
+                    {
+                        'id': 2,
+                        'name': 'Test Store 2',
+                        'items': []
                      }
                 ]
                 }
@@ -94,21 +102,25 @@ class StoreTest(BaseTest):
                 client.post("/item/Test Item 2", data={'price': 29.99, 'store_id': 2})
                 response = client.get("/stores")
                 expected = {'stores': [
-                    {'name': 'Test Store 1',
-                     'items': [
+                    {
+                        'id': 1,
+                        'name': 'Test Store 1',
+                        'items': [
                          {
                              'name': 'Test Item 1',
                              'price': 19.99
                           }
-                     ]
+                         ]
                      },
-                    {'name': 'Test Store 2',
-                     'items': [
+                    {
+                        'id': 2,
+                        'name': 'Test Store 2',
+                        'items': [
                          {
                              'name': 'Test Item 2',
                              'price': 29.99
                           }
-                     ]
+                        ]
                      }
                 ]
                 }
